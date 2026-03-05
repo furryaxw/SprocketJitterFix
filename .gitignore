@@ -1,0 +1,13 @@
+[Bb]in/
+[Oo]bj/
+
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+*.dll
+
+*.log
+.DS_Store
