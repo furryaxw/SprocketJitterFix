@@ -9,9 +9,12 @@
 
 ## 🛠️ 功能特性
 
-- **动态阻尼**：在炮管接近目标仰角时，自动介入线性阻尼，防止过度修正导致的反复震荡。
+- **线性阻尼**：在炮管接近目标仰角时，自动介入线性阻尼，平滑减速，防止过度修正导致的反复震荡。
+- **马达锁死**：修复了上个版本断电 Bug，在误差极小时保持液压马达微通电抱死，彻底解决重力下垂。
 - **性能优化**：
-  - 采用 **点积快路径** 逻辑，仅在误差极小时才进入复杂计算。
+  - **向量正交**：利用 Transform `forward` 与 `right` 天然正交的数学特性，完全消除了多余的自身投影计算。
+  - **消除开方**：摒弃了昂贵的 `Vector3.normalized` 和隐式的 `sqrt` 计算，全程使用向量长度平方进行不等式阈值比较。
+  - **消除跨界开销**：手工展开点乘、投影和反三角函数，替代 Unity 原生的 `Vector3.Project` 和 `Vector3.Angle`，将 Il2Cpp 的 C# <-> C++ 跨界调用开销降至最低。
 
 ## 🎥 效果对比
 
@@ -24,14 +27,6 @@
 2. 下载本项目的最新 [Releases](https://github.com/furryaxw/SprocketJitterFix/releases) 中的 `SprocketJitterFix.dll`。
 3. 将 `.dll` 文件放入游戏根目录的 `Mods` 文件夹中。
 4. 启动游戏，尽情享受稳定的火控。
-
-## 💻 技术实现
-
-本模组通过 Harmony 补丁拦截了 `LayingDriveBehaviour.MoveToTarget` 方法。
-主要数学优化逻辑：
-- 排除所有具备横向转动能力的驱动器。
-- 使用 `Vector3.ProjectOnPlane` 进行垂直向量正交分解。
-- 当 `cos(θ) > 0.99` 时触发阻尼乘区 `speedMultiplier *= (verticalDiff / maxStepEl)`。
 
 ## 🤝 鸣谢
 
