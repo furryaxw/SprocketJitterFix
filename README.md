@@ -1,38 +1,37 @@
-# LayingDrive Jitter Fix (SprocketJitterFix)
+# LayingDrive Jitter Fix（SprocketJitterFix）
 
 [![Game](https://img.shields.io/badge/Game-Sprocket-blue)](https://store.steampowered.com/app/1674170/Sprocket/)
 [![Mod Loader](https://img.shields.io/badge/Loader-MelonLoader-green)](https://melonwiki.xyz/)
+[![Version](https://img.shields.io/badge/version-0.9.0-brightgreen)](https://github.com/furryaxw/SprocketJitterFix/releases)
 
-> **"Not Vanilla, but stabilized."**
+> **Not Vanilla, but stabilized.**
 
-这是一个为《Sprocket》开发的增强模组，专注于解决原版游戏在特定设计下（如高灵敏度火控）出现的**高低机抖动**问题。
+面向《Sprocket》高灵敏度火控设计的稳定化模组，用于减轻高低机接近目标时的过冲和反复震荡。
 
-## 🛠️ 功能特性
+## 功能
 
-- **线性阻尼**：在炮管接近目标仰角时，自动介入线性阻尼，平滑减速，防止过度修正导致的反复震荡。
-- **马达锁死**：修复了上个版本断电 Bug，在误差极小时保持液压马达微通电抱死，彻底解决重力下垂。
-- **性能优化**：
-  - **向量正交**：利用 Transform `forward` 与 `right` 天然正交的数学特性，完全消除了多余的自身投影计算。
-  - **消除开方**：摒弃了昂贵的 `Vector3.normalized` 和隐式的 `sqrt` 计算，全程使用向量长度平方进行不等式阈值比较。
-  - **消除跨界开销**：手工展开点乘、投影和反三角函数，替代 Unity 原生的 `Vector3.Project` 和 `Vector3.Angle`，将 Il2Cpp 的 C# <-> C++ 跨界调用开销降至最低。
+- **近目标线性阻尼**：根据剩余俯仰误差按比例缩小 `MoveToTarget` 的速度倍率，避免以全速跨越目标。
+- **小角度精确计算**：使用 `atan2(sin, cos)` 计算俯仰误差，避免 `Acos` 在极小角度下因浮点舍入而把非零误差误判为零。
+- **微小保持倍率**：在误差精确为零时保留极小的非零倍率，避免断电式行为导致的下垂或突变。
+- **低开销路径**：横向机构工作、无目标或误差较大时直接交还游戏原逻辑；只在接近目标时执行精细角度计算。
 
-## 🎥 效果对比
+## 工作范围
 
-- **Vanilla**: 炮管在目标点上下高频震颤，影响行进间射击体验。
-- **Stabilized**: 丝滑锁定，接近准星时平稳减速并锚定。
+- 仅补丁 `LayingDriveBehaviour.MoveToTarget` 的俯仰接近阶段。
+- 横向机构存在有效运动范围时不介入，保持游戏原有的横向控制行为。
 
-## 📥 安装方法
+## 安装
 
-1. 确保你已安装最新版本的 [MelonLoader](https://melonwiki.xyz/)。
-2. 下载本项目的最新 [Releases](https://github.com/furryaxw/SprocketJitterFix/releases) 中的 `SprocketJitterFix.dll`。
-3. 将 `.dll` 文件放入游戏根目录的 `Mods` 文件夹中。
-4. 启动游戏，尽情享受稳定的火控。
+1. 安装与游戏版本匹配的 [MelonLoader](https://melonwiki.xyz/)。
+2. 从 [Releases](https://github.com/furryaxw/SprocketJitterFix/releases) 下载 `SprocketJitterFix.dll`。
+3. 将 DLL 放入游戏根目录的 `Mods` 文件夹。
+4. 启动游戏。
 
-## 🤝 鸣谢
+## 鸣谢
 
-- **Author**: furryAxw
-- **Tools**: Harmony, MelonLoader, Visual Studio 2026
+- Author: furryAxw
+- Tools: Harmony, MelonLoader, Visual Studio
 
-## 📄 License
+## License
 
-本项目采用 [GPL-3.0 License](LICENSE.txt) 开源许可。
+[GPL-3.0](LICENSE.txt)
