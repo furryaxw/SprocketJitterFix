@@ -2,7 +2,7 @@
 
 [![Game](https://img.shields.io/badge/Game-Sprocket-blue)](https://store.steampowered.com/app/1674170/Sprocket/)
 [![Mod Loader](https://img.shields.io/badge/Loader-MelonLoader-green)](https://melonwiki.xyz/)
-[![Version](https://img.shields.io/badge/version-0.9.0-brightgreen)](https://github.com/furryaxw/SprocketJitterFix/releases)
+[![Version](https://img.shields.io/badge/version-0.9.1-brightgreen)](https://github.com/furryaxw/SprocketJitterFix/releases)
 
 > **Not Vanilla, but stabilized.**
 

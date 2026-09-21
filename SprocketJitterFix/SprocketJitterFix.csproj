@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="SprocketModAPI">
+      <HintPath>..\..\..\Mods\SprocketModAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>..\..\..\MelonLoader\net6\0Harmony.dll</HintPath>
     </Reference>

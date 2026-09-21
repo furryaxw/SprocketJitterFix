@@ -1,20 +1,83 @@
 using System;
+using System.Reflection;
 using HarmonyLib;
 using Il2CppSprocket;
 using Il2CppSprocket.Vehicles.Weapons;
 using MelonLoader;
+using SprocketModAPI;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(SprocketJitterFix.JitterFixMain), "LayingDrive Jitter Fix", "0.9.0", "furryAxw")]
+[assembly: MelonInfo(typeof(SprocketJitterFix.JitterFixMain), "LayingDrive Jitter Fix", "0.9.1", "furryAxw")]
 [assembly: MelonGame("HD", "Sprocket")]
+[assembly: MelonAdditionalDependencies("SprocketModAPI")]
+[assembly: AssemblyMetadata("Sprocket.Mod.Id", "furryaxw.sprocket-jitter-fix")]
+[assembly: AssemblyMetadata("Sprocket.Mod.DisplayName", "Laying Drive Jitter Fix")]
+[assembly: AssemblyMetadata("Sprocket.Mod.Description", "Stabilizes high-sensitivity laying drives near their target angle.")]
+[assembly: AssemblyMetadata("Sprocket.Mod.Authors", "furryAxw")]
+[assembly: AssemblyMetadata("Sprocket.Mod.Repository", "furryaxw/SprocketJitterFix")]
+[assembly: AssemblyMetadata("Sprocket.Mod.Category", "utility")]
+[assembly: AssemblyMetadata("Sprocket.Mod.License", "GPL-3.0-only")]
 
 namespace SprocketJitterFix
 {
+    // 补丁是静态方法，所以可调设置放在静态持有类里；服务不可用时保持这里的默认值。
+    internal static class JitterFixSettings
+    {
+        internal static bool Enabled = true;
+    }
+
     public class JitterFixMain : MelonMod
     {
+        private IModConfigRegistration? configPage;
+
         public override void OnInitializeMelon()
         {
-            LoggerInstance.Msg("=== 动态阻尼已启动 ===");
+            RegisterConfigPage();
+            LoggerInstance.Msg($"[SJF] ready enabled={JitterFixSettings.Enabled}");
+        }
+
+        public override void OnDeinitializeMelon() => configPage?.Dispose();
+
+        private void RegisterConfigPage()
+        {
+            if (!SprocketApi.TryGetService<IModConfigService>(out IModConfigService? config) || config == null)
+                return;
+
+            try
+            {
+                configPage = config.Register(new ModConfigDefinition
+                {
+                    DisplayName = "Laying Drive Jitter Fix",
+                    Sections = new[] { new ModConfigSectionDefinition { Id = "damping", Title = "Damping" } },
+                    // 只暴露总开关：稳定角与横向阈值属于内部启发式，不对外暴露。
+                    Entries = new[]
+                    {
+                        ModConfigEntryDefinition.Toggle("enabled", "Enable jitter fix", true, sectionId: "damping"),
+                    },
+                });
+                config.Changed += OnConfigChanged;
+                Refresh();
+                LoggerInstance.Msg($"[SJF] config page registered entries={configPage.Snapshot.Entries.Count}");
+            }
+            catch (Exception exception)
+            {
+                LoggerInstance.Warning($"[SJF] config registration failed: {exception.Message}");
+                configPage = null;
+            }
+        }
+
+        private void OnConfigChanged(ModConfigChangedEventArgs args)
+        {
+            if (configPage != null && args.ModId == configPage.Snapshot.ModId)
+                Refresh();
+        }
+
+        private void Refresh()
+        {
+            if (configPage == null)
+                return;
+
+            JitterFixSettings.Enabled = configPage.GetBool("enabled");
         }
     }
 
@@ -30,7 +93,8 @@ namespace SprocketJitterFix
 
         static bool Prefix(LayingDriveBehaviour __instance, float deltaTime, ref float speedMultiplier, AimFlags flags)
         {
-            // 0. 基础状态快筛
+            // 0. 总开关 + 基础状态快筛
+            if (!JitterFixSettings.Enabled) return true;
             if (speedMultiplier <= 0f || deltaTime <= 0f) return true;
 
             // 1. 横向机构过滤 (提至最前，如果横向机构在动，直接跳过后续所有逻辑)
