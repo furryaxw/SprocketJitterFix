@@ -1,8 +1,8 @@
 # LayingDrive Jitter Fix（SprocketJitterFix）
 
 [![Game](https://img.shields.io/badge/Game-Sprocket-blue)](https://store.steampowered.com/app/1674170/Sprocket/)
-[![Mod Loader](https://img.shields.io/badge/Loader-MelonLoader-green)](https://melonwiki.xyz/)
-[![Version](https://img.shields.io/badge/version-0.9.1-brightgreen)](https://github.com/furryaxw/SprocketJitterFix/releases)
+[![Mod Loader](https://img.shields.io/badge/Loader-BepInEx%206-blue)](https://github.com/BepInEx/BepInEx)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)](https://github.com/furryaxw/SprocketJitterFix/releases)
 
 > **Not Vanilla, but stabilized.**
 
@@ -20,17 +20,22 @@
 - 仅补丁 `LayingDriveBehaviour.MoveToTarget` 的俯仰接近阶段。
 - 横向机构存在有效运动范围时不介入，保持游戏原有的横向控制行为。
 
+## 要求
+
+- 《Sprocket》`0.2.55.5`、BepInEx `6.0.0-be.788`（IL2CPP / net6）
+- Windows x64
+
 ## 安装
 
-1. 安装与游戏版本匹配的 [MelonLoader](https://melonwiki.xyz/)。
+1. 为《Sprocket》安装 BepInEx 6（IL2CPP）。
 2. 从 [Releases](https://github.com/furryaxw/SprocketJitterFix/releases) 下载 `SprocketJitterFix.dll`。
-3. 将 DLL 放入游戏根目录的 `Mods` 文件夹。
+3. 将 DLL 放入 `BepInEx\plugins`。
 4. 启动游戏。
 
 ## 鸣谢
 
 - Author: furryAxw
-- Tools: Harmony, MelonLoader, Visual Studio
+- Tools: Harmony, BepInEx, Visual Studio
 
 ## License
 
