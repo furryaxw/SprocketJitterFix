@@ -5,6 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
     <SprocketGameRoot Condition="'$(SprocketGameRoot)' == '' and '$(SPROCKET_GAME_ROOT)' != ''">$(SPROCKET_GAME_ROOT)</SprocketGameRoot>
     <SprocketGameRoot Condition="'$(SprocketGameRoot)' == ''">G:\Sprocket0.2.55.5</SprocketGameRoot>
     <BepInExCore>$(SprocketGameRoot)\BepInEx\core</BepInExCore>

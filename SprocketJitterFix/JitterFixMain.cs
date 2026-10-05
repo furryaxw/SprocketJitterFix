@@ -24,7 +24,7 @@ namespace SprocketJitterFix
         internal static bool Enabled = true;
     }
 
-    [BepInPlugin(PluginGuid, "Laying Drive Jitter Fix", "0.9.1")]
+    [BepInPlugin(PluginGuid, "Laying Drive Jitter Fix", "1.0.0")]
     [BepInDependency("furryaxw.sprocket-mod-api")]
     public class JitterFixMain : BasePlugin
     {
