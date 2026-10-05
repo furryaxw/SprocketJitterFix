@@ -1,4 +1,6 @@
-# LayingDrive Jitter Fix（SprocketJitterFix）
+# LayingDrive Jitter Fix (SprocketJitterFix)
+
+[中文](README.zh.md) | **English**
 
 [![Game](https://img.shields.io/badge/Game-Sprocket-blue)](https://store.steampowered.com/app/1674170/Sprocket/)
 [![Mod Loader](https://img.shields.io/badge/Loader-BepInEx%206-blue)](https://github.com/BepInEx/BepInEx)
@@ -6,33 +8,42 @@
 
 > **Not Vanilla, but stabilized.**
 
-面向《Sprocket》高灵敏度火控设计的稳定化模组，用于减轻高低机接近目标时的过冲和反复震荡。
+A stabilization mod for high-sensitivity fire control in Sprocket, built to reduce the
+overshoot and repeated oscillation of the elevation drive as it closes on the target.
 
-## 功能
+## Features
 
-- **近目标线性阻尼**：根据剩余俯仰误差按比例缩小 `MoveToTarget` 的速度倍率，避免以全速跨越目标。
-- **小角度精确计算**：使用 `atan2(sin, cos)` 计算俯仰误差，避免 `Acos` 在极小角度下因浮点舍入而把非零误差误判为零。
-- **微小保持倍率**：在误差精确为零时保留极小的非零倍率，避免断电式行为导致的下垂或突变。
-- **低开销路径**：横向机构工作、无目标或误差较大时直接交还游戏原逻辑；只在接近目标时执行精细角度计算。
+- **Linear damping near the target**: scales down the `MoveToTarget` speed multiplier in
+  proportion to the remaining elevation error, so the drive never crosses the target at
+  full speed.
+- **Accurate small-angle computation**: computes the elevation error with
+  `atan2(sin, cos)` instead of `Acos`, which at very small angles can mistake a small
+  non-zero error for zero because of floating-point rounding.
+- **Tiny hold multiplier**: keeps a very small non-zero multiplier when the error is
+  exactly zero, avoiding the sag or sudden jump that power-cut-like behaviour would cause.
+- **Low-overhead path**: hands control straight back to the game's original logic while
+  the traverse mechanism is active, when there is no target, or when the error is large;
+  the precise angle computation only runs as the drive approaches the target.
 
-## 工作范围
+## Scope
 
-- 仅补丁 `LayingDriveBehaviour.MoveToTarget` 的俯仰接近阶段。
-- 横向机构存在有效运动范围时不介入，保持游戏原有的横向控制行为。
+- Patches only the elevation approach stage of `LayingDriveBehaviour.MoveToTarget`.
+- Does not intervene while the traverse mechanism has a valid range of motion, preserving
+  the game's original traverse control behaviour.
 
-## 要求
+## Requirements
 
-- 《Sprocket》`0.2.55.5`、BepInEx `6.0.0-be.788`（IL2CPP / net6）
+- Sprocket `0.2.55.5`, BepInEx `6.0.0-be.788` (IL2CPP / net6)
 - Windows x64
 
-## 安装
+## Installation
 
-1. 为《Sprocket》安装 BepInEx 6（IL2CPP）。
-2. 从 [Releases](https://github.com/furryaxw/SprocketJitterFix/releases) 下载 `SprocketJitterFix.dll`。
-3. 将 DLL 放入 `BepInEx\plugins`。
-4. 启动游戏。
+1. Install BepInEx 6 (IL2CPP) for Sprocket.
+2. Download `SprocketJitterFix.dll` from [Releases](https://github.com/furryaxw/SprocketJitterFix/releases).
+3. Place the DLL into `BepInEx\plugins`.
+4. Launch the game.
 
-## 鸣谢
+## Credits
 
 - Author: furryAxw
 - Tools: Harmony, BepInEx, Visual Studio
