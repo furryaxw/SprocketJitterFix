@@ -1,15 +1,13 @@
 using System;
 using System.Reflection;
+using BepInEx;
+using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
-using Il2CppSprocket;
-using Il2CppSprocket.Vehicles.Weapons;
-using MelonLoader;
+using Sprocket;
+using Sprocket.Vehicles.Weapons;
 using SprocketModAPI;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(SprocketJitterFix.JitterFixMain), "LayingDrive Jitter Fix", "0.9.1", "furryAxw")]
-[assembly: MelonGame("HD", "Sprocket")]
-[assembly: MelonAdditionalDependencies("SprocketModAPI")]
 [assembly: AssemblyMetadata("Sprocket.Mod.Id", "furryaxw.sprocket-jitter-fix")]
 [assembly: AssemblyMetadata("Sprocket.Mod.DisplayName", "Laying Drive Jitter Fix")]
 [assembly: AssemblyMetadata("Sprocket.Mod.Description", "Stabilizes high-sensitivity laying drives near their target angle.")]
@@ -26,17 +24,26 @@ namespace SprocketJitterFix
         internal static bool Enabled = true;
     }
 
-    public class JitterFixMain : MelonMod
+    [BepInPlugin(PluginGuid, "Laying Drive Jitter Fix", "0.9.1")]
+    [BepInDependency("furryaxw.sprocket-mod-api")]
+    public class JitterFixMain : BasePlugin
     {
+        internal const string PluginGuid = "furryaxw.sprocket-jitter-fix";
+
         private IModConfigRegistration? configPage;
 
-        public override void OnInitializeMelon()
+        public override void Load()
         {
             RegisterConfigPage();
-            LoggerInstance.Msg($"[SJF] ready enabled={JitterFixSettings.Enabled}");
+            Harmony.CreateAndPatchAll(typeof(JitterFixMain).Assembly, PluginGuid);
+            Log.LogInfo($"[SJF] ready enabled={JitterFixSettings.Enabled}");
         }
 
-        public override void OnDeinitializeMelon() => configPage?.Dispose();
+        public override bool Unload()
+        {
+            configPage?.Dispose();
+            return true;
+        }
 
         private void RegisterConfigPage()
         {
@@ -57,11 +64,11 @@ namespace SprocketJitterFix
                 });
                 config.Changed += OnConfigChanged;
                 Refresh();
-                LoggerInstance.Msg($"[SJF] config page registered entries={configPage.Snapshot.Entries.Count}");
+                Log.LogInfo($"[SJF] config page registered entries={configPage.Snapshot.Entries.Count}");
             }
             catch (Exception exception)
             {
-                LoggerInstance.Warning($"[SJF] config registration failed: {exception.Message}");
+                Log.LogWarning($"[SJF] config registration failed: {exception.Message}");
                 configPage = null;
             }
         }

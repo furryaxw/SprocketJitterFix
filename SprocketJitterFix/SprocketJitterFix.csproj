@@ -5,41 +5,62 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <SprocketGameRoot Condition="'$(SprocketGameRoot)' == '' and '$(SPROCKET_GAME_ROOT)' != ''">$(SPROCKET_GAME_ROOT)</SprocketGameRoot>
+    <SprocketGameRoot Condition="'$(SprocketGameRoot)' == ''">G:\Sprocket0.2.55.5</SprocketGameRoot>
+    <BepInExCore>$(SprocketGameRoot)\BepInEx\core</BepInExCore>
+    <GameInterop>$(SprocketGameRoot)\BepInEx\interop</GameInterop>
+    <ModDeployDirectory Condition="'$(ModDeployDirectory)' == ''">$(SprocketGameRoot)\BepInEx\plugins</ModDeployDirectory>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="SprocketModAPI">
-      <HintPath>..\..\..\Mods\SprocketModAPI.dll</HintPath>
+      <HintPath>$(SprocketGameRoot)\BepInEx\plugins\SprocketModAPI.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\MelonLoader\net6\0Harmony.dll</HintPath>
+      <HintPath>$(BepInExCore)\0Harmony.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\MelonLoader\Il2CppAssemblies\Assembly-CSharp.dll</HintPath>
+    <Reference Include="BepInEx.Core">
+      <HintPath>$(BepInExCore)\BepInEx.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="BepInEx.Unity.Common">
+      <HintPath>$(BepInExCore)\BepInEx.Unity.Common.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="BepInEx.Unity.IL2CPP">
+      <HintPath>$(BepInExCore)\BepInEx.Unity.IL2CPP.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Il2CppInterop.Runtime">
-      <HintPath>..\..\..\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>
+      <HintPath>$(BepInExCore)\Il2CppInterop.Runtime.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Il2Cppmscorlib">
-      <HintPath>..\..\..\MelonLoader\Il2CppAssemblies\Il2Cppmscorlib.dll</HintPath>
+      <HintPath>$(GameInterop)\Il2Cppmscorlib.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Il2CppSprocket.Core">
-      <HintPath>..\..\..\MelonLoader\Il2CppAssemblies\Il2CppSprocket.Core.dll</HintPath>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GameInterop)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Il2CppSprocket.LayingDriveDesigner">
-      <HintPath>..\..\..\MelonLoader\Il2CppAssemblies\Il2CppSprocket.LayingDriveDesigner.dll</HintPath>
+    <Reference Include="Sprocket.Core">
+      <HintPath>$(GameInterop)\Sprocket.Core.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="MelonLoader">
-      <HintPath>..\..\..\MelonLoader\net6\MelonLoader.dll</HintPath>
+    <Reference Include="Sprocket.LayingDriveDesigner">
+      <HintPath>$(GameInterop)\Sprocket.LayingDriveDesigner.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\MelonLoader\Il2CppAssemblies\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(GameInterop)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;G:\Sprocket\Mods\&quot;" />
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(SkipModDeploy)' != 'true'">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModDeployDirectory)" />
   </Target>
 
 </Project>
